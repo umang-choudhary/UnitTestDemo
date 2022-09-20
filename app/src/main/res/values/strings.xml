@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">UnitTestDemo</string>
+
+    <!-- Validation strings -->
+    <string name="msg_empty_user_name_error">Please Enter Username</string>
+    <string name="msg_invalid_user_name_error">Username length should be minimum 4 Character</string>
+    <string name="msg_empty_email_error">Please Enter Email Id</string>
+    <string name="msg_invalid_email_error">Please Enter Valid Email Id</string>
+    <string name="msg_empty_pin_code_error">Please Enter Pin Code</string>
+    <string name="msg_invalid_pin_code_error">Please Enter Valid Pin Code</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="pin_code">Pin Code</string>
+    <string name="save">Save</string>
+
+    <string name="add_new_employee">Add New Employee</string>
+</resources>
