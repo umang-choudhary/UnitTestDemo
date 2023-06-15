@@ -31,8 +31,17 @@ platform :android do
   end
   
   lane :build_and_distribute do
+    increment_vc()
     build()
     distribute_to_firebase()
+  end
+  
+  desc "Increment version code"
+  private_lane :increment_vc do
+  increment_version_code(
+       gradle_file_path: "./app/build.gradle",
+
+  )
   end
   
   desc "Build the .apk file"

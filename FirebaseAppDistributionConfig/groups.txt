@@ -1,1 +1,1 @@
-qa-team
+qa-team, dev-team

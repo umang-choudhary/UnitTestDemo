@@ -35,13 +35,21 @@ platform :android do
     distribute_to_firebase()
   end
   
+  desc "Increment version code"
+  lane :increment_vc do
+  increment_version_code(
+       gradle_file_path: "./app/build.gradle",
+
+  )
+  end
+  
   desc "Build the .apk file"
   private_lane :build do
   gradle(
     task: "clean assemble",
     build_type: ENV['BUILD_TYPE'],
 	properties: {
-    "android.injected.signing.store.file" => "C:\\Users\\UmangC\\AndroidProjects\\JetpackProjects\\UnitTestDemo\\unit_test_keystore.jks",
+    "android.injected.signing.store.file" => ENV['KEYSTORE_PATH'],
     "android.injected.signing.store.password" => ENV['KEYSTORE_PASS'],
     "android.injected.signing.key.alias" => ENV['KEY_ALIAS'],
     "android.injected.signing.key.password" => ENV['KEY_PASS'],
