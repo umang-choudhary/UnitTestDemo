@@ -6,9 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.unittestdemo.db.entity.Employee
 import com.example.unittestdemo.model.EventMsg
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class EmployeeViewModel(private val employeeRepository: EmployeeRepository) : ViewModel() {
 
@@ -38,5 +37,13 @@ class EmployeeViewModel(private val employeeRepository: EmployeeRepository) : Vi
             allEmployeeData.value = employeeList
         }
         return allEmployeeData
+    }
+
+    suspend fun getAllEmployeeList(): List<Employee> {
+        val deferredList = viewModelScope.async {
+            employeeRepository.getAllEmployee()
+        }
+
+        return deferredList.await()
     }
 }

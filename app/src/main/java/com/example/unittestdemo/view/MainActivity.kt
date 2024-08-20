@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.unittestdemo.adapter.EmployeeListAdapter
 import com.example.unittestdemo.databinding.ActivityMainBinding
 import com.example.unittestdemo.db.AppDatabase
@@ -12,6 +13,7 @@ import com.example.unittestdemo.db.entity.Employee
 import com.example.unittestdemo.view.mvvm.EmployeeRepository
 import com.example.unittestdemo.view.mvvm.EmployeeViewModel
 import com.example.unittestdemo.view.mvvm.EmployeeViewModelFactory
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,7 +39,23 @@ class MainActivity : AppCompatActivity() {
         employeeViewModel = ViewModelProvider(this, factory)[EmployeeViewModel::class.java]
 
         if (employeeViewModel.allEmployeeData.value == null) {
-            employeeViewModel.getAllEmployee()
+            lifecycleScope.launch {
+                val employeeList = employeeViewModel.getAllEmployeeList()
+                Toast.makeText(
+                    this@MainActivity,
+                    "All data fetched successfully",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+                setEmployeeData(employeeList)
+            }
+            Toast.makeText(
+                this@MainActivity,
+                "Data loading...",
+                Toast.LENGTH_SHORT
+            )
+                .show()
+            /*employeeViewModel.getAllEmployee()
                 .observe(this) {
                     val employeeList = it
                     Toast.makeText(
@@ -47,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                     )
                         .show()
                     setEmployeeData(employeeList)
-                }
+                }*/
         } else {
             setEmployeeData(employeeViewModel.allEmployeeData.value!!)
         }
