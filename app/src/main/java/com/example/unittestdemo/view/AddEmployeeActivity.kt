@@ -1,7 +1,15 @@
 package com.example.unittestdemo.view
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.Window
+import android.widget.Button
+import android.widget.RelativeLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +22,8 @@ import com.example.unittestdemo.utils.validateUserName
 import com.example.unittestdemo.view.mvvm.EmployeeRepository
 import com.example.unittestdemo.view.mvvm.EmployeeViewModel
 import com.example.unittestdemo.view.mvvm.EmployeeViewModelFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class AddEmployeeActivity : AppCompatActivity() {
@@ -26,6 +36,9 @@ class AddEmployeeActivity : AppCompatActivity() {
         binding = ActivityAddEmployeeBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        binding.includeTripInfo.txtViewTripTitle.text = "Trip # : "
+        binding.includeTripInfo.txtViewTripValue.text = "878787"
 
         initData()
         setListener()

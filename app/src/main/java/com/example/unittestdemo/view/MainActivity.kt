@@ -1,12 +1,15 @@
 package com.example.unittestdemo.view
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.Window
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.unittestdemo.adapter.EmployeeListAdapter
+import com.example.unittestdemo.databinding.ActivityAlertBinding
 import com.example.unittestdemo.databinding.ActivityMainBinding
 import com.example.unittestdemo.db.AppDatabase
 import com.example.unittestdemo.db.entity.Employee
@@ -24,8 +27,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
+
+        binding.includeTripInfo.txtViewTripTitle.text = "Trip No : "
+        binding.includeTripInfo.txtViewTripValue.text = "345789"
 
         initData()
         setListener()
@@ -84,9 +89,39 @@ class MainActivity : AppCompatActivity() {
 
     private fun setListener() {
         binding.btnAddNewEmployee.setOnClickListener {
+            showConfirmationDialog()
+        }
+    }
+
+    private fun showConfirmationDialog() {
+        val dialogBinding = ActivityAlertBinding.inflate(layoutInflater);
+
+        val dialog = Dialog(this@MainActivity)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(dialogBinding.root)
+        dialog.setCanceledOnTouchOutside(false)
+        if (!isFinishing) {
+            dialog.show()
+        }
+
+        dialogBinding.headingTxt.text = "Confirmation"
+        dialogBinding.resultTxt.text = "Are you sure want to add employee ?"
+
+        dialogBinding.okBtn.text = "YES"
+        dialogBinding.cancelBtn.text = "NO"
+
+
+        dialogBinding.okBtn.setOnClickListener {
+            dialog.dismiss()
+
             val intent = Intent(this@MainActivity, AddEmployeeActivity::class.java)
             startActivity(intent)
         }
+
+        dialogBinding.cancelBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
     }
 
 }
