@@ -8,12 +8,16 @@ import kotlinx.coroutines.withContext
 
 class EmployeeRepository(private val employeeDao: EmployeeDao) {
 
-    suspend fun insertEmployee(employee: Employee) = withContext(Dispatchers.IO) {
-        employeeDao.addEmployee(employee)
+    suspend fun insertEmployee(employee: Employee): Long {
+        return withContext(Dispatchers.IO) {
+            employeeDao.addEmployee(employee)
+        }
     }
 
-    suspend fun getAllEmployee(): List<Employee> = withContext(Dispatchers.IO) {
-        delay(2000)
-        employeeDao.getAllEmployee()
+    suspend fun getAllEmployee(): List<Employee> {
+        return withContext(Dispatchers.IO) {
+            delay(2000)
+            employeeDao.getAllEmployee()
+        }
     }
 }

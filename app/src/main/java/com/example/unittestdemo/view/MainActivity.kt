@@ -3,6 +3,7 @@ package com.example.unittestdemo.view
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Window
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,65 +17,65 @@ import com.example.unittestdemo.db.entity.Employee
 import com.example.unittestdemo.view.mvvm.EmployeeRepository
 import com.example.unittestdemo.view.mvvm.EmployeeViewModel
 import com.example.unittestdemo.view.mvvm.EmployeeViewModelFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var employeeRepository: EmployeeRepository
     private lateinit var binding: ActivityMainBinding
     private lateinit var employeeViewModel: EmployeeViewModel
+    private var isOnCreateExecuted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        isOnCreateExecuted = true
 
         binding.includeTripInfo.txtViewTripTitle.text = "Trip No : "
         binding.includeTripInfo.txtViewTripValue.text = "345789"
 
-        initData()
+        employeeRepository = EmployeeRepository(
+            AppDatabase.getInstance(applicationContext)!!.employeeDao()
+        )
+        val factory = EmployeeViewModelFactory(employeeRepository)
+        employeeViewModel = ViewModelProvider(this, factory)[EmployeeViewModel::class.java]
+
+        refreshUIData()
         setListener()
     }
 
-    private fun initData() {
-        val groceryRepository = EmployeeRepository(
-            AppDatabase.getInstance(applicationContext)!!.employeeDao()
-        )
-        val factory = EmployeeViewModelFactory(groceryRepository)
-        employeeViewModel = ViewModelProvider(this, factory)[EmployeeViewModel::class.java]
+    override fun onResume() {
+        super.onResume()
 
-        if (employeeViewModel.allEmployeeData.value == null) {
-            lifecycleScope.launch {
-                val employeeList = employeeViewModel.getAllEmployeeList()
+        if (isOnCreateExecuted) {
+            isOnCreateExecuted = false
+        } else {
+            refreshUIData()
+        }
+    }
+
+    private fun refreshUIData() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val employeeList = employeeRepository.getAllEmployee()
+            Log.d("--UnitTestDemo--", "MainActivity initData ${Thread.currentThread().name}")
+
+            withContext(Dispatchers.Main) {
                 Toast.makeText(
                     this@MainActivity,
                     "All data fetched successfully",
                     Toast.LENGTH_SHORT
-                )
-                    .show()
-                setEmployeeData(employeeList)
-            }
-            Toast.makeText(
-                this@MainActivity,
-                "Data loading...",
-                Toast.LENGTH_SHORT
-            )
-                .show()
-            /*employeeViewModel.getAllEmployee()
-                .observe(this) {
-                    val employeeList = it
-                    Toast.makeText(
-                        this@MainActivity,
-                        "All data fetched successfully",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                    setEmployeeData(employeeList)
-                }*/
-        } else {
-            setEmployeeData(employeeViewModel.allEmployeeData.value!!)
-        }
+                ).show()
 
+                setEmployeeData(employeeList)
+
+                Log.d("--UnitTestDemo--", "MainActivity initData end ${Thread.currentThread().name}")
+            }
+
+        }
     }
 
     private fun setEmployeeData(employeeList: List<Employee>) {
